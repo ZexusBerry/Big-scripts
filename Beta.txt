@@ -225,3 +225,35 @@ local function TeleportToBasicShop()
 end
 
 button6.MouseButton1Click:Connect(TeleportToBasicShop)
+
+local function MoveToCparts()
+	local collectiblesFolder = game.Workspace:FindFirstChild("collectibles")
+	if collectiblesFolder then
+		local c = collectiblesFolder:GetChildren()
+		for _, c in ipairs(c) do
+			if c.Name == "C" then
+				game.Players.LocalPlayer.Character:MoveTo(c.Position)
+				wait(0.2)
+			end
+		end
+	else
+		warn("Collectibles folder not found in Workspace.")
+	end
+end
+
+buttonFarm1.MouseButton1Click:Connect(function()
+	while true do
+		local collectiblesFolder = game.Workspace:FindFirstChild("collectibles")
+		if collectiblesFolder then
+			local c = collectiblesFolder:GetChildren()
+			for _, c in ipairs(c) do
+				if c.Name == "C" then
+					game.Players.LocalPlayer.Character:MoveTo(c.Position)
+					wait(0.2)
+				end
+			end
+		else
+			warn("Collectibles folder not found in Workspace.")
+		end
+	end
+end)
