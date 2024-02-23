@@ -1,6 +1,8 @@
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
+local player = game.Players.LocalPlayer
+
 local function CreateButton(text, position, parent)
 	local button = Instance.new("TextButton")
 	button.Name = "CustomButton"
@@ -174,51 +176,13 @@ local checkBoxMisc2 = CreateCheckBox("Ping", UDim2.new(0.5, 0, 0.77, 0), MiscMen
 
 
 local buttonFarm1 = CreateButton("Collect All Orb", UDim2.new(0.5, 0, 0.05, 0), FarmMenu)
-local buttonFarm2 = CreateButton("start honey storm", UDim2.new(0.5, 0, 0.05, 0), FarmMenu)
+local buttonFarm2 = CreateButton("start honey storm", UDim2.new(0.5, 0, 0.17, 0), FarmMenu)
 
 local checkBoxFarm1 = CreateCheckBox("Farm Ant amulet", UDim2.new(0.5, 0, 0.57, 0), FarmMenu)
 local checkBoxFarm2 = CreateCheckBox("Collect present", UDim2.new(0.5, 0, 0.67, 0), FarmMenu)
 local checkBoxFarm3 = CreateCheckBox("killed chick", UDim2.new(0.5, 0, 0.77, 0), FarmMenu)
 local checkBoxFarm4 = CreateCheckBox("killed mob", UDim2.new(0.5, 0, 0.87, 0), FarmMenu)
 
-
-button2.MouseButton2Click:Connect(function()
-	local area = game.Workspace.Shops.JellyDispenser:FindFirstChild("Items")
-	if area then
-		local part1 = area:FindFirstChild("RoyalJelly")
-		if part1 and part1:IsA("Part") then
-			local rootPart = part1:FindFirstChildWhichIsA("BasePart")
-			if rootPart then
-				game.Players.LocalPlayer.Character:MoveTo(rootPart.Position)
-			else
-				print("Root part not found in ToyLand PART1.")
-			end
-		else
-			print("PART1 model not found in ToyLand area.")
-		end
-	else
-		print("ToyLand area not found.")
-	end
-end)
-
-button6.MouseButton6Click:Connect(function()
-	local area = game.Workspace.Shops.BasicShop:FindFirstChild("Items")
-	if area then
-		local part1 = area:FindFirstChild("Helmet")
-		if part1 and part1:IsA("Part") then
-			local rootPart = part1:FindFirstChildWhichIsA("BasePart")
-			if rootPart then
-				game.Players.LocalPlayer.Character:MoveTo(rootPart.Position)
-			else
-				print("Root part not found in ToyLand PART1.")
-			end
-		else
-			print("PART1 model not found in ToyLand area.")
-		end
-	else
-		print("ToyLand area not found.")
-	end
-end)
 
 local function MoveToCollectibles()
 	local collectiblesFolder = game.Workspace:WaitForChild("collectibles") -- Находим папку "collectibles" в Workspace
@@ -235,3 +199,29 @@ end
 buttonFarm1.MouseButton1Click:Connect(function()
 	MoveToCollectibles() -- Вызываем функцию при нажатии на кнопку
 end)
+
+local function TeleportToRoyalJelly()
+	-- Получаем объект RoyalJelly
+	local royalJelly = game.Workspace.Shops.JellyDispenser.Items.RoyalJelly
+	if royalJelly then
+		-- Перемещаем игрока к RoyalJelly
+		player.Character:MoveTo(royalJelly.Position)
+	else
+		warn("Объект RoyalJelly не найден.")
+	end
+end
+
+button2.MouseButton1Click:Connect(TeleportToRoyalJelly)
+
+local function TeleportToBasicShop()
+	-- Получаем объект RoyalJelly
+	local Helmet = game.Workspace.Shops.BasicShop.Items.Helmet
+	if Helmet then
+		-- Перемещаем игрока к RoyalJelly
+		player.Character:MoveTo(Helmet.Position)
+	else
+		warn("Объект RoyalJelly не найден.")
+	end
+end
+
+button6.MouseButton1Click:Connect(TeleportToBasicShop)
