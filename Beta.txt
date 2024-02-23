@@ -1,0 +1,237 @@
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+local function CreateButton(text, position, parent)
+	local button = Instance.new("TextButton")
+	button.Name = "CustomButton"
+	button.Text = text
+	button.Size = UDim2.new(0.8, 0, 0.08, 0)
+	button.Position = position
+	button.AnchorPoint = Vector2.new(0.5, 0)
+	button.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	button.BorderColor3 = Color3.fromRGB(100, 100, 100)
+	button.BorderSizePixel = 2
+	button.Font = Enum.Font.SourceSans
+	button.TextColor3 = Color3.new(1, 1, 1)
+	button.TextSize = 20
+	button.TextWrapped = true
+	button.Parent = parent
+	return button
+end
+
+local function CreateCheckBox(text, position, parent)
+	local checkBoxFrame = Instance.new("Frame")
+	checkBoxFrame.Name = "CustomCheckBoxFrame"
+	checkBoxFrame.Size = UDim2.new(0.8, 0, 0.1, 0)
+	checkBoxFrame.Position = position
+	checkBoxFrame.AnchorPoint = Vector2.new(0.5, 0)
+	checkBoxFrame.BackgroundTransparency = 1
+	checkBoxFrame.Parent = parent
+
+	local checkBox = Instance.new("TextButton")
+	checkBox.Name = "CustomCheckBox"
+	checkBox.Text = ""
+	checkBox.Size = UDim2.new(0.1, 0, 0.5, 0)
+	checkBox.Position = UDim2.new(0, 0, 0, 0)
+	checkBox.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	checkBox.BorderColor3 = Color3.fromRGB(100, 100, 100)
+	checkBox.BorderSizePixel = 2
+	checkBox.Font = Enum.Font.SourceSans
+	checkBox.TextSize = 20
+	checkBox.AutoButtonColor = false
+	checkBox.Parent = checkBoxFrame
+
+	local checkMark = Instance.new("Frame")
+	checkMark.Name = "CheckMark"
+	checkMark.Size = UDim2.new(0.8, 0, 0.8, 0)
+	checkMark.Position = UDim2.new(0.1, 0, 0.1, 0)
+	checkMark.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+	checkMark.BorderSizePixel = 0
+	checkMark.Visible = false
+	checkMark.Parent = checkBox
+
+	checkBox.MouseButton1Click:Connect(function()
+		checkMark.Visible = not checkMark.Visible
+	end)
+
+	local checkText = Instance.new("TextLabel")
+	checkText.Name = "CheckText"
+	checkText.Text = text
+	checkText.Size = UDim2.new(0.55, 0, 0.5, 0)
+	checkText.Position = UDim2.new(0.04, 0, 0, 0)
+	checkText.BackgroundTransparency = 1
+	checkText.Font = Enum.Font.SourceSans
+	checkText.TextSize = 20
+	checkText.TextColor3 = Color3.new(1, 1, 1)
+	checkText.TextWrapped = true
+	checkText.Parent = checkBoxFrame
+
+	return checkBoxFrame
+end
+
+local function CreateTab(text, position, onClick, parent)
+	local tabButton = Instance.new("TextButton")
+	tabButton.Name = "CustomTabButton"
+	tabButton.Text = text
+	tabButton.Size = UDim2.new(0.35, 0, 0.25, 0)
+	tabButton.Position = position
+	tabButton.AnchorPoint = Vector2.new(0.5, 0)
+	tabButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	tabButton.BorderColor3 = Color3.fromRGB(100, 100, 100)
+	tabButton.BorderSizePixel = 2
+	tabButton.Font = Enum.Font.SourceSans
+	tabButton.TextColor3 = Color3.new(1, 1, 1)
+	tabButton.TextSize = 20
+	tabButton.TextWrapped = true
+	tabButton.Parent = parent
+
+	tabButton.MouseButton1Click:Connect(function()
+		onClick()
+	end)
+
+	return tabButton
+end
+
+local Menu = Instance.new("Frame")
+Menu.Name = "CustomMenu"
+Menu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
+Menu.Position = UDim2.new(0.17, 0, 0.44, 0)
+Menu.AnchorPoint = Vector2.new(0.5, 0.5)
+Menu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Menu.BorderSizePixel = 0
+Menu.ClipsDescendants = true
+Menu.Parent = ScreenGui
+
+local Sidebar = Instance.new("Frame")
+Sidebar.Name = "Sidebar"
+Sidebar.Size = UDim2.new(0.16, 0, 0.14, 0)
+Sidebar.Position = UDim2.new(0.5, 0, 0.44, 0)
+Sidebar.AnchorPoint = Vector2.new(0.5, 0.5)
+Sidebar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Sidebar.BorderSizePixel = 0
+Sidebar.Parent = ScreenGui
+
+local MiscMenu = Instance.new("Frame")
+MiscMenu.Name = "MiscMenu"
+MiscMenu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
+MiscMenu.Position = UDim2.new(0.17, 0, 0.44, 0)
+MiscMenu.AnchorPoint = Vector2.new(0.5, 0.5)
+MiscMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+MiscMenu.BorderSizePixel = 0
+MiscMenu.ClipsDescendants = true
+MiscMenu.Parent = ScreenGui
+MiscMenu.Visible = false
+
+local FarmMenu = Instance.new("Frame")
+FarmMenu.Name = "FarmMenu"
+FarmMenu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
+FarmMenu.Position = UDim2.new(0.17, 0, 0.44, 0)
+FarmMenu.AnchorPoint = Vector2.new(0.5, 0.5)
+FarmMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+FarmMenu.BorderSizePixel = 0
+FarmMenu.ClipsDescendants = true
+FarmMenu.Parent = ScreenGui
+FarmMenu.Visible = false
+
+local function ShowTeleport()
+	Menu.Visible = true
+	MiscMenu.Visible = false
+end
+
+local function ShowFarm()
+	Menu.Visible = false
+    MiscMenu.Visible = false
+	FarmMenu.Visible = not FarmMenu.Visible
+end
+
+local function ShowMisc()
+	Menu.Visible = false
+	MiscMenu.Visible = not MiscMenu.Visible
+end
+
+local tab1 = CreateTab("Teleport", UDim2.new(0.16, 0, 0.15, 0), ShowTeleport, Sidebar)
+local tab2 = CreateTab("Farm", UDim2.new(0.60, 0, 0.15, 0), ShowFarm, Sidebar)
+local tab3 = CreateTab("Misc", UDim2.new(1.05, 0, 0.15, 0), ShowMisc, Sidebar)
+
+local button1 = CreateButton("Teleport Ticket stand", UDim2.new(0.5, 0, 0.05, 0), Menu)
+local button2 = CreateButton("Teleport Royal jelly shop", UDim2.new(0.5, 0, 0.17, 0), Menu)
+local button3 = CreateButton("Teleport Donate stand", UDim2.new(0.5, 0, 0.29, 0), Menu)
+local button4 = CreateButton("Teleport Brender", UDim2.new(0.5, 0, 0.41, 0), Menu)
+local button5 = CreateButton("Teleport ticket shop", UDim2.new(0.5, 0, 0.53, 0), Menu)
+local button6 = CreateButton("Teleport starter things shop", UDim2.new(0.5, 0, 0.65, 0), Menu)
+local button7 = CreateButton("Teleport Pro things shop", UDim2.new(0.5, 0, 0.77, 0), Menu)
+local button8 = CreateButton("Teleport Master things shop", UDim2.new(0.5, 0, 0.89, 0), Menu)
+
+
+local buttonMisc0 = CreateButton("Redeem all codes", UDim2.new(0.5, 0, 0.05, 0), MiscMenu)
+local buttonMisc1 = CreateButton("Uningect", UDim2.new(0.5, 0, 0.17, 0), MiscMenu)
+local buttonMisc2 = CreateButton("fps Boost", UDim2.new(0.5, 0, 0.29, 0), MiscMenu)
+local buttonMisc3 = CreateButton("anti Afk", UDim2.new(0.5, 0, 0.41, 0), MiscMenu)
+local buttonMisc4 = CreateButton("Coming soon...", UDim2.new(0.5, 0, 0.53, 0), MiscMenu)
+
+local checkBoxMisc1 = CreateCheckBox("Fps", UDim2.new(0.5, 0, 0.67, 0), MiscMenu)
+local checkBoxMisc2 = CreateCheckBox("Ping", UDim2.new(0.5, 0, 0.77, 0), MiscMenu)
+
+
+local buttonFarm1 = CreateButton("Collect All Orb", UDim2.new(0.5, 0, 0.05, 0), FarmMenu)
+local buttonFarm2 = CreateButton("start honey storm", UDim2.new(0.5, 0, 0.05, 0), FarmMenu)
+
+local checkBoxFarm1 = CreateCheckBox("Farm Ant amulet", UDim2.new(0.5, 0, 0.57, 0), FarmMenu)
+local checkBoxFarm2 = CreateCheckBox("Collect present", UDim2.new(0.5, 0, 0.67, 0), FarmMenu)
+local checkBoxFarm3 = CreateCheckBox("killed chick", UDim2.new(0.5, 0, 0.77, 0), FarmMenu)
+local checkBoxFarm4 = CreateCheckBox("killed mob", UDim2.new(0.5, 0, 0.87, 0), FarmMenu)
+
+
+button2.MouseButton2Click:Connect(function()
+	local area = game.Workspace.Shops.JellyDispenser:FindFirstChild("Items")
+	if area then
+		local part1 = area:FindFirstChild("RoyalJelly")
+		if part1 and part1:IsA("Part") then
+			local rootPart = part1:FindFirstChildWhichIsA("BasePart")
+			if rootPart then
+				game.Players.LocalPlayer.Character:MoveTo(rootPart.Position)
+			else
+				print("Root part not found in ToyLand PART1.")
+			end
+		else
+			print("PART1 model not found in ToyLand area.")
+		end
+	else
+		print("ToyLand area not found.")
+	end
+end)
+
+button6.MouseButton6Click:Connect(function()
+	local area = game.Workspace.Shops.BasicShop:FindFirstChild("Items")
+	if area then
+		local part1 = area:FindFirstChild("Helmet")
+		if part1 and part1:IsA("Part") then
+			local rootPart = part1:FindFirstChildWhichIsA("BasePart")
+			if rootPart then
+				game.Players.LocalPlayer.Character:MoveTo(rootPart.Position)
+			else
+				print("Root part not found in ToyLand PART1.")
+			end
+		else
+			print("PART1 model not found in ToyLand area.")
+		end
+	else
+		print("ToyLand area not found.")
+	end
+end)
+
+local function MoveToCollectibles()
+	local collectiblesFolder = game.Workspace:WaitForChild("collectibles") -- Находим папку "collectibles" в Workspace
+	local collectibleParts = collectiblesFolder:GetChildren() -- Получаем все дочерние объекты в папке "collectibles"
+
+	for _, collectiblePart in ipairs(collectibleParts) do -- Перебираем все части в папке
+		if collectiblePart.Name == "С" and collectiblePart:IsA("BasePart") then -- Проверяем, что имя объекта равно "Partc" и он является частью
+			game.Players.LocalPlayer.Character:MoveTo(collectiblePart.Position) -- Перемещаем игрока к позиции объекта
+			wait(2) -- Ждем 2 секунды перед перемещением к следующему объекту
+		end
+	end
+end
+
+buttonFarm1.MouseButton1Click:Connect(function()
+	MoveToCollectibles() -- Вызываем функцию при нажатии на кнопку
+end)
