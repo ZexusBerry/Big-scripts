@@ -213,6 +213,7 @@ end
 
 button2.MouseButton1Click:Connect(TeleportToRoyalJelly)
 
+
 local function TeleportToBasicShop()
 	-- Получаем объект RoyalJelly
 	local Helmet = game.Workspace.Shops.BasicShop.Items.Helmet
@@ -226,6 +227,33 @@ end
 
 button6.MouseButton1Click:Connect(TeleportToBasicShop)
 
+local function TeleportToProShop()
+	-- Получаем объект RoyalJelly
+	local Compressor = game.Workspace.Shops.ProShop.Items.Compressor
+	if Compressor then
+		-- Перемещаем игрока к RoyalJelly
+		player.Character:MoveTo(Compressor.Position)
+	else
+		warn("Объект RoyalJelly не найден.")
+	end
+end
+
+button7.MouseButton1Click:Connect(TeleportToProShop)
+
+
+local function TeleportToTicket()
+	-- Получаем объект RoyalJelly
+	local Tabby = game.Workspace.Shops.TicketShop.Items.Tabby
+	if Tabby then
+		-- Перемещаем игрока к RoyalJelly
+		player.Character:MoveTo(Tabby.Position)
+	else
+		warn("Объект RoyalJelly не найден.")
+	end
+end
+
+button5.MouseButton1Click:Connect(TeleportToTicket)
+
 local function MoveToCparts()
 	local collectiblesFolder = game.Workspace:FindFirstChild("collectibles")
 	if collectiblesFolder then
@@ -233,7 +261,7 @@ local function MoveToCparts()
 		for _, c in ipairs(c) do
 			if c.Name == "C" then
 				game.Players.LocalPlayer.Character:MoveTo(c.Position)
-				wait(0.2)
+				wait(0.6)
 			end
 		end
 	else
@@ -243,17 +271,6 @@ end
 
 buttonFarm1.MouseButton1Click:Connect(function()
 	while true do
-		local collectiblesFolder = game.Workspace:FindFirstChild("collectibles")
-		if collectiblesFolder then
-			local c = collectiblesFolder:GetChildren()
-			for _, c in ipairs(c) do
-				if c.Name == "C" then
-					game.Players.LocalPlayer.Character:MoveTo(c.Position)
-					wait(0.2)
-				end
-			end
-		else
-			warn("Collectibles folder not found in Workspace.")
-		end
+		MoveToCparts()
 	end
 end)
