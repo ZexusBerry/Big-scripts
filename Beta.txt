@@ -1,9 +1,23 @@
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
 local player = game.Players.LocalPlayer
 
-local function CreateButton(text, position, parent)
+-- Создаем ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- Создаем кнопку
+
+local Menu = Instance.new("Frame")
+Menu.Name = "CustomMenu"
+Menu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
+Menu.Position = UDim2.new(0.17, 0, 0.44, 0)
+Menu.AnchorPoint = Vector2.new(0.5, 0.5)
+Menu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Menu.BorderSizePixel = 0
+Menu.ClipsDescendants = true
+Menu.Parent = ScreenGui
+
+-- Функция для создания кнопки
+local function CreateButton(text, position)
 	local button = Instance.new("TextButton")
 	button.Name = "CustomButton"
 	button.Text = text
@@ -17,18 +31,19 @@ local function CreateButton(text, position, parent)
 	button.TextColor3 = Color3.new(1, 1, 1)
 	button.TextSize = 20
 	button.TextWrapped = true
-	button.Parent = parent
+	button.Parent = Menu
 	return button
 end
 
-local function CreateCheckBox(text, position, parent)
+-- Функция для создания чекбокса
+local function CreateCheckBox(text, position)
 	local checkBoxFrame = Instance.new("Frame")
 	checkBoxFrame.Name = "CustomCheckBoxFrame"
 	checkBoxFrame.Size = UDim2.new(0.8, 0, 0.1, 0)
 	checkBoxFrame.Position = position
 	checkBoxFrame.AnchorPoint = Vector2.new(0.5, 0)
 	checkBoxFrame.BackgroundTransparency = 1
-	checkBoxFrame.Parent = parent
+	checkBoxFrame.Parent = Menu
 
 	local checkBox = Instance.new("TextButton")
 	checkBox.Name = "CustomCheckBox"
@@ -60,7 +75,7 @@ local function CreateCheckBox(text, position, parent)
 	checkText.Name = "CheckText"
 	checkText.Text = text
 	checkText.Size = UDim2.new(0.55, 0, 0.5, 0)
-	checkText.Position = UDim2.new(0.04, 0, 0, 0)
+	checkText.Position = UDim2.new(0.25, 0, 0, 0)
 	checkText.BackgroundTransparency = 1
 	checkText.Font = Enum.Font.SourceSans
 	checkText.TextSize = 20
@@ -71,206 +86,69 @@ local function CreateCheckBox(text, position, parent)
 	return checkBoxFrame
 end
 
-local function CreateTab(text, position, onClick, parent)
-	local tabButton = Instance.new("TextButton")
-	tabButton.Name = "CustomTabButton"
-	tabButton.Text = text
-	tabButton.Size = UDim2.new(0.35, 0, 0.25, 0)
-	tabButton.Position = position
-	tabButton.AnchorPoint = Vector2.new(0.5, 0)
-	tabButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-	tabButton.BorderColor3 = Color3.fromRGB(100, 100, 100)
-	tabButton.BorderSizePixel = 2
-	tabButton.Font = Enum.Font.SourceSans
-	tabButton.TextColor3 = Color3.new(1, 1, 1)
-	tabButton.TextSize = 20
-	tabButton.TextWrapped = true
-	tabButton.Parent = parent
+local button1 = CreateButton("Arena Farm (beta)", UDim2.new(0.5, 0, 0.05, 0))
+local button2 = CreateButton("Arena Farm 2 (beta)", UDim2.new(0.5, 0, 0.17, 0))
 
-	tabButton.MouseButton1Click:Connect(function()
-		onClick()
-	end)
+-- Создание чекбоксов
+local checkBox1 = CreateCheckBox("Farm orbs", UDim2.new(0.5, 0, 0.57, 0))
+local checkBox2 = CreateCheckBox("Killed mob", UDim2.new(0.5, 0, 0.67, 0))
+local checkBox3 = CreateCheckBox("Collect present", UDim2.new(0.5, 0, 0.77, 0))
+local checkBox4 = CreateCheckBox("Farm ant amulet", UDim2.new(0.5, 0, 0.87, 0))
 
-	return tabButton
-end
+local player = game.Players.LocalPlayer
+local button = script.Parent -- Предполагается, что кнопка находится в том же объекте, где находится этот скрипт
 
-local Menu = Instance.new("Frame")
-Menu.Name = "CustomMenu"
-Menu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
-Menu.Position = UDim2.new(0.17, 0, 0.44, 0)
-Menu.AnchorPoint = Vector2.new(0.5, 0.5)
-Menu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Menu.BorderSizePixel = 0
-Menu.ClipsDescendants = true
-Menu.Parent = ScreenGui
+local isTeleporting = false -- Переменная для отслеживания состояния телепортации
 
-local Sidebar = Instance.new("Frame")
-Sidebar.Name = "Sidebar"
-Sidebar.Size = UDim2.new(0.16, 0, 0.14, 0)
-Sidebar.Position = UDim2.new(0.5, 0, 0.44, 0)
-Sidebar.AnchorPoint = Vector2.new(0.5, 0.5)
-Sidebar.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Sidebar.BorderSizePixel = 0
-Sidebar.Parent = ScreenGui
-
-local MiscMenu = Instance.new("Frame")
-MiscMenu.Name = "MiscMenu"
-MiscMenu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
-MiscMenu.Position = UDim2.new(0.17, 0, 0.44, 0)
-MiscMenu.AnchorPoint = Vector2.new(0.5, 0.5)
-MiscMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-MiscMenu.BorderSizePixel = 0
-MiscMenu.ClipsDescendants = true
-MiscMenu.Parent = ScreenGui
-MiscMenu.Visible = false
-
-local FarmMenu = Instance.new("Frame")
-FarmMenu.Name = "FarmMenu"
-FarmMenu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
-FarmMenu.Position = UDim2.new(0.17, 0, 0.44, 0)
-FarmMenu.AnchorPoint = Vector2.new(0.5, 0.5)
-FarmMenu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-FarmMenu.BorderSizePixel = 0
-FarmMenu.ClipsDescendants = true
-FarmMenu.Parent = ScreenGui
-FarmMenu.Visible = false
-
-local function ShowTeleport()
-	Menu.Visible = true
-	MiscMenu.Visible = false
-end
-
-local function ShowFarm()
-	Menu.Visible = false
-    MiscMenu.Visible = false
-	FarmMenu.Visible = not FarmMenu.Visible
-end
-
-local function ShowMisc()
-	Menu.Visible = false
-	MiscMenu.Visible = not MiscMenu.Visible
-end
-
-local tab1 = CreateTab("Teleport", UDim2.new(0.16, 0, 0.15, 0), ShowTeleport, Sidebar)
-local tab2 = CreateTab("Farm", UDim2.new(0.60, 0, 0.15, 0), ShowFarm, Sidebar)
-local tab3 = CreateTab("Misc", UDim2.new(1.05, 0, 0.15, 0), ShowMisc, Sidebar)
-
-local button1 = CreateButton("Teleport Ticket stand", UDim2.new(0.5, 0, 0.05, 0), Menu)
-local button2 = CreateButton("Teleport Royal jelly shop", UDim2.new(0.5, 0, 0.17, 0), Menu)
-local button3 = CreateButton("Teleport Donate stand", UDim2.new(0.5, 0, 0.29, 0), Menu)
-local button4 = CreateButton("Teleport Brender", UDim2.new(0.5, 0, 0.41, 0), Menu)
-local button5 = CreateButton("Teleport ticket shop", UDim2.new(0.5, 0, 0.53, 0), Menu)
-local button6 = CreateButton("Teleport starter things shop", UDim2.new(0.5, 0, 0.65, 0), Menu)
-local button7 = CreateButton("Teleport Pro things shop", UDim2.new(0.5, 0, 0.77, 0), Menu)
-local button8 = CreateButton("Teleport Master things shop", UDim2.new(0.5, 0, 0.89, 0), Menu)
-
-
-local buttonMisc0 = CreateButton("Redeem all codes", UDim2.new(0.5, 0, 0.05, 0), MiscMenu)
-local buttonMisc1 = CreateButton("Uningect", UDim2.new(0.5, 0, 0.17, 0), MiscMenu)
-local buttonMisc2 = CreateButton("fps Boost", UDim2.new(0.5, 0, 0.29, 0), MiscMenu)
-local buttonMisc3 = CreateButton("anti Afk", UDim2.new(0.5, 0, 0.41, 0), MiscMenu)
-local buttonMisc4 = CreateButton("Coming soon...", UDim2.new(0.5, 0, 0.53, 0), MiscMenu)
-
-local checkBoxMisc1 = CreateCheckBox("Fps", UDim2.new(0.5, 0, 0.67, 0), MiscMenu)
-local checkBoxMisc2 = CreateCheckBox("Ping", UDim2.new(0.5, 0, 0.77, 0), MiscMenu)
-
-
-local buttonFarm1 = CreateButton("Collect All Orb", UDim2.new(0.5, 0, 0.05, 0), FarmMenu)
-local buttonFarm2 = CreateButton("start honey storm", UDim2.new(0.5, 0, 0.17, 0), FarmMenu)
-
-local checkBoxFarm1 = CreateCheckBox("Farm Ant amulet", UDim2.new(0.5, 0, 0.57, 0), FarmMenu)
-local checkBoxFarm2 = CreateCheckBox("Collect present", UDim2.new(0.5, 0, 0.67, 0), FarmMenu)
-local checkBoxFarm3 = CreateCheckBox("killed chick", UDim2.new(0.5, 0, 0.77, 0), FarmMenu)
-local checkBoxFarm4 = CreateCheckBox("killed mob", UDim2.new(0.5, 0, 0.87, 0), FarmMenu)
-
-
-local function MoveToCollectibles()
-	local collectiblesFolder = game.Workspace:WaitForChild("collectibles") -- Находим папку "collectibles" в Workspace
-	local collectibleParts = collectiblesFolder:GetChildren() -- Получаем все дочерние объекты в папке "collectibles"
-
-	for _, collectiblePart in ipairs(collectibleParts) do -- Перебираем все части в папке
-		if collectiblePart.Name == "С" and collectiblePart:IsA("BasePart") then -- Проверяем, что имя объекта равно "Partc" и он является частью
-			game.Players.LocalPlayer.Character:MoveTo(collectiblePart.Position) -- Перемещаем игрока к позиции объекта
-			wait(2) -- Ждем 2 секунды перед перемещением к следующему объекту
+-- Функция для телепортации игрока к объекту
+local function teleportToButton()
+	local retroDoor = workspace:FindFirstChild("Battlearena") -- Находим модель Battlearena в workspace
+	if retroDoor then
+		local buttonInside = retroDoor:FindFirstChild("Arena") -- Находим кнопку внутри модели
+		if buttonInside then
+			local buttonPosition = buttonInside.Position -- Получаем позицию кнопки
+			local character = player.Character
+			if character then
+				local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+				if humanoidRootPart then
+					humanoidRootPart.CFrame = CFrame.new(buttonPosition) + Vector3.new(0, 5, 0) -- Телепортируем игрока к кнопке с некоторым смещением вверх
+				else
+					warn("HumanoidRootPart не найден в персонаже.")
+				end
+			else
+				warn("Персонаж не найден.")
+			end
+		else
+			warn("Кнопка не найдена в модели Battlearena.")
 		end
+	else
+		warn("Модель Battlearena не найдена в workspace.")
 	end
 end
 
-buttonFarm1.MouseButton1Click:Connect(function()
-	MoveToCollectibles() -- Вызываем функцию при нажатии на кнопку
+-- Функция для периодического телепортирования
+local function periodicTeleport()
+	while isTeleporting do
+		teleportToButton()
+		wait(0.1) -- Ждем 1 секунду перед следующим телепортированием
+	end
+end
+
+-- Привязываем функцию телепортации к событию нажатия кнопки
+button1.MouseButton1Click:Connect(function()
+	isTeleporting = not isTeleporting -- Изменяем состояние телепортации
+	if isTeleporting then
+		-- Запускаем функцию периодического телепортирования в новом потоке
+		coroutine.wrap(periodicTeleport)()
+	end
 end)
 
-local function TeleportToRoyalJelly()
-	-- Получаем объект RoyalJelly
-	local royalJelly = game.Workspace.Shops.JellyDispenser.Items.RoyalJelly
-	if royalJelly then
-		-- Перемещаем игрока к RoyalJelly
-		player.Character:MoveTo(royalJelly.Position)
-	else
-		warn("Объект RoyalJelly не найден.")
-	end
-end
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local button2 = script.Parent -- Предполагается, что кнопка находится в том же объекте, где находится этот скрипт
 
-button2.MouseButton1Click:Connect(TeleportToRoyalJelly)
+local RockmodeEvent = ReplicatedStorage:WaitForChild("Rockmode") -- Ждем, пока событие Rockmode будет доступно в ReplicatedStorage
 
-
-local function TeleportToBasicShop()
-	-- Получаем объект RoyalJelly
-	local Helmet = game.Workspace.Shops.BasicShop.Items.Helmet
-	if Helmet then
-		-- Перемещаем игрока к RoyalJelly
-		player.Character:MoveTo(Helmet.Position)
-	else
-		warn("Объект RoyalJelly не найден.")
-	end
-end
-
-button6.MouseButton1Click:Connect(TeleportToBasicShop)
-
-local function TeleportToProShop()
-	-- Получаем объект RoyalJelly
-	local Compressor = game.Workspace.Shops.ProShop.Items.Compressor
-	if Compressor then
-		-- Перемещаем игрока к RoyalJelly
-		player.Character:MoveTo(Compressor.Position)
-	else
-		warn("Объект RoyalJelly не найден.")
-	end
-end
-
-button7.MouseButton1Click:Connect(TeleportToProShop)
-
-
-local function TeleportToTicket()
-	-- Получаем объект RoyalJelly
-	local Tabby = game.Workspace.Shops.TicketShop.Items.Tabby
-	if Tabby then
-		-- Перемещаем игрока к RoyalJelly
-		player.Character:MoveTo(Tabby.Position)
-	else
-		warn("Объект RoyalJelly не найден.")
-	end
-end
-
-button5.MouseButton1Click:Connect(TeleportToTicket)
-
-local function MoveToCparts()
-	local collectiblesFolder = game.Workspace:FindFirstChild("collectibles")
-	if collectiblesFolder then
-		local c = collectiblesFolder:GetChildren()
-		for _, c in ipairs(c) do
-			if c.Name == "C" then
-				game.Players.LocalPlayer.Character:MoveTo(c.Position)
-				wait(0.6)
-			end
-		end
-	else
-		warn("Collectibles folder not found in Workspace.")
-	end
-end
-
-buttonFarm1.MouseButton1Click:Connect(function()
-	while true do
-		MoveToCparts()
-	end
+-- Привязываем функцию к событию нажатия на кнопку
+button2.MouseButton1Click:Connect(function()
+	RockmodeEvent:Fire() -- Активируем удаленное событие Rockmode
 end)
