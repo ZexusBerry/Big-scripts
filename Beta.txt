@@ -1,14 +1,10 @@
 local player = game.Players.LocalPlayer
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Workspace = game:GetService("Workspace")
-local checkBox1 = script.Parent.CustomMenu:WaitForChild("CustomCheckBoxFrame")
 
 -- Создаем ScreenGui
 local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = player:WaitForChild("PlayerGui")
 
--- Создаем кнопку
-
+-- Создаем Frame для меню
 local Menu = Instance.new("Frame")
 Menu.Name = "CustomMenu"
 Menu.Size = UDim2.new(0.33, 0, 0.82, 0)  -- Увеличим высоту меню
@@ -17,7 +13,7 @@ Menu.AnchorPoint = Vector2.new(0.5, 0.5)
 Menu.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 Menu.BorderSizePixel = 0
 Menu.ClipsDescendants = true
-Menu.Parent = ScreenGui
+Menu.Parent = screenGui
 
 -- Функция для создания кнопки
 local function CreateButton(text, position)
@@ -72,28 +68,6 @@ local function CreateCheckBox(text, position)
 
 	checkBox.MouseButton1Click:Connect(function()
 		checkMark.Visible = not checkMark.Visible
-		if checkMark.Visible then
-			-- При нажатии на чекбокс перемещаем игрока к объекту "plate" и привязываем его к нему
-			local plate = Workspace.Arena:FindFirstChild("plate")
-			if plate then
-				local character = player.Character
-				if character then
-					local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-					if humanoidRootPart then
-						humanoidRootPart.CFrame = plate.CFrame
-						humanoidRootPart.Anchored = true
-						humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.new(0, 0, 5) -- Поднимаем игрока немного вверх, чтобы избежать столкновений с объектом
-						humanoidRootPart.Anchored = false
-						-- Прикрепляем игрока к объекту "plate"
-						humanoidRootPart.CFrame = plate.CFrame * CFrame.new(0, humanoidRootPart.Size.Y / 2, 0)
-						local weld = Instance.new("WeldConstraint")
-						weld.Parent = humanoidRootPart
-						weld.Part0 = humanoidRootPart
-						weld.Part1 = plate
-					end
-				end
-			end
-		end
 	end)
 
 	local checkText = Instance.new("TextLabel")
@@ -112,10 +86,11 @@ local function CreateCheckBox(text, position)
 end
 
 local button1 = CreateButton("Arena Farm (beta)", UDim2.new(0.5, 0, 0.05, 0))
-local button2 = CreateButton("Get All Slappy", UDim2.new(0.5, 0, 0.17, 0))
+local button2 = CreateButton("Get Tycoon :D (10min)", UDim2.new(0.5, 0, 0.17, 0))
+local button3 = CreateButton("Get all Slapple", UDim2.new(0.5, 0, 0.29, 0))
 
 -- Создание чекбоксов
-local checkBox1 = CreateCheckBox("Get tycoon :D (10min)", UDim2.new(0.5, 0, 0.57, 0))
+local checkBox1 = CreateCheckBox("Wait baby..", UDim2.new(0.5, 0, 0.47, 0))
 
 
 local player = game.Players.LocalPlayer
@@ -153,7 +128,7 @@ end
 local function periodicTeleport()
 	while isTeleporting do
 		teleportToButton()
-		wait(0.1) -- Ждем 1 секунду перед следующим телепортированием
+		wait(0.15) -- Ждем 1 секунду перед следующим телепортированием
 	end
 end
 
@@ -164,4 +139,121 @@ button1.MouseButton1Click:Connect(function()
 		-- Запускаем функцию периодического телепортирования в новом потоке
 		coroutine.wrap(periodicTeleport)()
 	end
+end)
+
+local player = game.Players.LocalPlayer
+
+-- Функция для телепортации игрока к объекту "plate" в "Workspace.Arena"
+local function teleportToPlate()
+	local arena = workspace:FindFirstChild("Arena") -- Находим объект Arena в workspace
+	if arena then
+		local plate = arena:FindFirstChild("plate") -- Находим объект plate внутри Arena
+		if plate then
+			local platePosition = plate.Position -- Получаем позицию plate
+			local character = player.Character
+			if character then
+				local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+				if humanoidRootPart then
+					humanoidRootPart.CFrame = CFrame.new(platePosition) + Vector3.new(0, 5, 0) -- Телепортируем игрока к plate с некоторым смещением вверх
+				else
+					warn("HumanoidRootPart не найден в персонаже.")
+				end
+			else
+				warn("Персонаж не найден.")
+			end
+		else
+			warn("Объект plate не найден внутри Arena.")
+		end
+	else
+		warn("Объект Arena не найден в workspace.")
+	end
+end
+
+local isTeleporting = false -- Переменная для отслеживания состояния периодической телепортации
+
+-- Функция для периодической телепортации игрока к объекту "plate"
+local function periodicTeleport2()
+	while isTeleporting do
+		teleportToPlate()
+		wait(0.04) -- Период телепортации каждую секунду
+	end
+end
+
+-- Привязываем функцию телепортации к событию нажатия на кнопку
+button2.MouseButton1Click:Connect(function()
+	isTeleporting = not isTeleporting -- Изменяем состояние периодической телепортации
+	if isTeleporting then
+		-- Запускаем функцию периодической телепортации в новом потоке
+		coroutine.wrap(periodicTeleport2)()
+	end
+end)
+
+local player = game.Players.LocalPlayer
+local button = script.Parent -- Предполагается, что кнопка находится в том же объекте, где находится этот скрипт
+
+local isTeleporting = false -- Переменная для отслеживания состояния периодической телепортации
+local slapples = {} -- Таблица для хранения всех объектов Slapple
+
+-- Функция для нахождения всех объектов Slapple и добавления их в таблицу
+local function findSlapples()
+	local arena = workspace:FindFirstChild("Arena") -- Находим объект Arena в workspace
+	if arena then
+		local island5 = arena:FindFirstChild("island5") -- Находим объект island5 внутри Arena
+		if island5 then
+			local slapplesFolder = island5:FindFirstChild("Slapples") -- Находим папку Slapples внутри island5
+			if slapplesFolder then
+				for _, child in ipairs(slapplesFolder:GetChildren()) do
+					if child.Name == "Slapple" then
+						table.insert(slapples, child)
+					end
+				end
+			else
+				warn("Папка Slapples не найдена внутри island5.")
+			end
+		else
+			warn("Объект island5 не найден внутри Arena.")
+		end
+	else
+		warn("Объект Arena не найден в workspace.")
+	end
+end
+
+-- Функция для телепортации игрока к следующему объекту Slapple
+local currentIndex = 1 -- Индекс текущего объекта Slapple
+local function teleportToNextSlapple()
+	if #slapples == 0 then
+		warn("Нет объектов Slapple для телепортации.")
+		return
+	end
+	local currentSlapple = slapples[currentIndex]
+	if currentSlapple then
+		local slapplePosition = currentSlapple.Position -- Получаем позицию текущего объекта Slapple
+		local character = player.Character
+		if character then
+			local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+			if humanoidRootPart then
+				humanoidRootPart.CFrame = CFrame.new(slapplePosition) + Vector3.new(0, 5, 0) -- Телепортируем игрока к текущему объекту Slapple с некоторым смещением вверх
+				currentIndex = currentIndex % #slapples + 1 -- Переходим к следующему объекту Slapple
+			else
+				warn("HumanoidRootPart не найден в персонаже.")
+			end
+		else
+			warn("Персонаж не найден.")
+		end
+	end
+end
+
+-- Функция для периодической телепортации игрока к объектам Slapple
+local function periodicTeleport3()
+	while isTeleporting do
+		teleportToNextSlapple()
+		wait(1) -- Период телепортации каждую секунду
+	end
+end
+
+-- Привязываем функцию нахождения объектов Slapple к событию нажатия на кнопку
+button3.MouseButton1Click:Connect(function()
+	findSlapples() -- Находим все объекты Slapple
+	isTeleporting = true -- Начинаем периодическую телепортацию
+	coroutine.wrap(periodicTeleport3)()
 end)
