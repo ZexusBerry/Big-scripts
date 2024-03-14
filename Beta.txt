@@ -189,26 +189,35 @@ button2.MouseButton1Click:Connect(function()
 end)
 
 local player = game.Players.LocalPlayer
-local button = script.Parent -- Предполагается, что кнопка находится в том же объекте, где находится этот скрипт
+local button0 = script.Parent -- Предполагается, что кнопка находится в том же объекте, где находится этот скрипт
 
-local isTeleporting = false -- Переменная для отслеживания состояния периодической телепортации
-local slapples = {} -- Таблица для хранения всех объектов Slapple
-
--- Функция для нахождения всех объектов Slapple и добавления их в таблицу
-local function findSlapples()
+-- Функция для телепортации игрока к объекту "Slapple" в "Workspace.Arena.island5.Slapples"
+local function teleportToSlapple()
 	local arena = workspace:FindFirstChild("Arena") -- Находим объект Arena в workspace
 	if arena then
 		local island5 = arena:FindFirstChild("island5") -- Находим объект island5 внутри Arena
 		if island5 then
-			local slapplesFolder = island5:FindFirstChild("Slapples") -- Находим папку Slapples внутри island5
-			if slapplesFolder then
-				for _, child in ipairs(slapplesFolder:GetChildren()) do
-					if child.Name == "Slapple" then
-						table.insert(slapples, child)
+			local slapples = island5:FindFirstChild("Slapples") -- Находим объект Slapples внутри island5
+			if slapples then
+				local slapple = slapples:FindFirstChild("Slapple") -- Находим объект Slapple внутри Slapples
+				if slapple then
+					local slapplePosition = slapple.Position -- Получаем позицию Slapple
+					local character = player.Character
+					if character then
+						local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+						if humanoidRootPart then
+							humanoidRootPart.CFrame = CFrame.new(slapplePosition) + Vector3.new(0, 5, 0) -- Телепортируем игрока к Slapple с некоторым смещением вверх
+						else
+							warn("HumanoidRootPart не найден в персонаже.")
+						end
+					else
+						warn("Персонаж не найден.")
 					end
+				else
+					warn("Объект Slapple не найден внутри Slapples.")
 				end
 			else
-				warn("Папка Slapples не найдена внутри island5.")
+				warn("Объект Slapples не найден внутри island5.")
 			end
 		else
 			warn("Объект island5 не найден внутри Arena.")
@@ -218,42 +227,5 @@ local function findSlapples()
 	end
 end
 
--- Функция для телепортации игрока к следующему объекту Slapple
-local currentIndex = 1 -- Индекс текущего объекта Slapple
-local function teleportToNextSlapple()
-	if #slapples == 0 then
-		warn("Нет объектов Slapple для телепортации.")
-		return
-	end
-	local currentSlapple = slapples[currentIndex]
-	if currentSlapple then
-		local slapplePosition = currentSlapple.Position -- Получаем позицию текущего объекта Slapple
-		local character = player.Character
-		if character then
-			local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-			if humanoidRootPart then
-				humanoidRootPart.CFrame = CFrame.new(slapplePosition) + Vector3.new(0, 5, 0) -- Телепортируем игрока к текущему объекту Slapple с некоторым смещением вверх
-				currentIndex = currentIndex % #slapples + 1 -- Переходим к следующему объекту Slapple
-			else
-				warn("HumanoidRootPart не найден в персонаже.")
-			end
-		else
-			warn("Персонаж не найден.")
-		end
-	end
-end
-
--- Функция для периодической телепортации игрока к объектам Slapple
-local function periodicTeleport3()
-	while isTeleporting do
-		teleportToNextSlapple()
-		wait(1) -- Период телепортации каждую секунду
-	end
-end
-
--- Привязываем функцию нахождения объектов Slapple к событию нажатия на кнопку
-button3.MouseButton1Click:Connect(function()
-	findSlapples() -- Находим все объекты Slapple
-	isTeleporting = true -- Начинаем периодическую телепортацию
-	coroutine.wrap(periodicTeleport3)()
-end)
+-- Привязываем функцию телепортации к событию нажатия на кнопку
+button3.MouseButton1Click:Connect(teleportToSlapple)
