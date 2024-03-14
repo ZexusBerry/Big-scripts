@@ -145,38 +145,38 @@ local player = game.Players.LocalPlayer
 
 -- Функция для телепортации игрока к объекту "plate" в "Workspace.Arena"
 local function teleportToPlate()
-	local arena = workspace:FindFirstChild("Arena") -- Находим объект Arena в workspace
-	if arena then
-		local plate = arena:FindFirstChild("plank") -- Находим объект plate внутри Arena
-		if plate then
-			local platePosition = plate.Position -- Получаем позицию plate
-			local character = player.Character
-			if character then
-				local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-				if humanoidRootPart then
-					humanoidRootPart.CFrame = CFrame.new(platePosition) + Vector3.new(0, 5, 0) -- Телепортируем игрока к plate с некоторым смещением вверх
-				else
-					warn("HumanoidRootPart не найден в персонаже.")
-				end
-			else
-				warn("Персонаж не найден.")
-			end
-		else
-			warn("Объект plate не найден внутри Arena.")
-		end
-	else
-		warn("Объект Arena не найден в workspace.")
-	end
+    local arena = workspace:FindFirstChild("Arena") -- Находим объект Arena в workspace
+    if arena then
+        local plate = arena:FindFirstChildOfClass("MeshPart") -- Находим объект plate класса MeshPart внутри Arena
+        if plate then
+            local platePosition = plate.Position -- Получаем позицию plate
+            local character = player.Character
+            if character then
+                local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart then
+                    humanoidRootPart.CFrame = CFrame.new(platePosition) + Vector3.new(0, 5, 0) -- Телепортируем игрока к plate с некоторым смещением вверх
+                else
+                    warn("HumanoidRootPart не найден в персонаже.")
+                end
+            else
+                warn("Персонаж не найден.")
+            end
+        else
+            warn("Объект plate не найден внутри Arena.")
+        end
+    else
+        warn("Объект Arena не найден в workspace.")
+    end
 end
 
 local isTeleporting = false -- Переменная для отслеживания состояния периодической телепортации
 
 -- Функция для периодической телепортации игрока к объекту "plate"
-local function periodicTeleport2()
-	while isTeleporting do
-		teleportToPlate()
-		wait(0.04) -- Период телепортации каждую секунду
-	end
+local function periodicTeleport()
+    while isTeleporting do
+        teleportToPlate()
+        wait(0.04) -- Период телепортации каждую 0.04 секунды
+    end
 end
 
 -- Привязываем функцию телепортации к событию нажатия на кнопку
