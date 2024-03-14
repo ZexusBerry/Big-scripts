@@ -147,7 +147,7 @@ local player = game.Players.LocalPlayer
 local function teleportToPlate()
 	local arena = workspace:FindFirstChild("Arena") -- Находим объект Arena в workspace
 	if arena then
-		local plate = arena:FindFirstChild("plate") -- Находим объект plate внутри Arena
+		local plate = arena:FindFirstChild("plank") -- Находим объект plate внутри Arena
 		if plate then
 			local platePosition = plate.Position -- Получаем позицию plate
 			local character = player.Character
