@@ -1,4 +1,7 @@
 local player = game.Players.LocalPlayer
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Workspace = game:GetService("Workspace")
+local checkBox1 = script.Parent.CustomMenu:WaitForChild("CustomCheckBoxFrame")
 
 -- Создаем ScreenGui
 local screenGui = Instance.new("ScreenGui")
@@ -69,6 +72,28 @@ local function CreateCheckBox(text, position)
 
 	checkBox.MouseButton1Click:Connect(function()
 		checkMark.Visible = not checkMark.Visible
+		if checkMark.Visible then
+			-- При нажатии на чекбокс перемещаем игрока к объекту "plate" и привязываем его к нему
+			local plate = Workspace.Arena:FindFirstChild("plate")
+			if plate then
+				local character = player.Character
+				if character then
+					local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+					if humanoidRootPart then
+						humanoidRootPart.CFrame = plate.CFrame
+						humanoidRootPart.Anchored = true
+						humanoidRootPart.CFrame = humanoidRootPart.CFrame * CFrame.new(0, 0, 5) -- Поднимаем игрока немного вверх, чтобы избежать столкновений с объектом
+						humanoidRootPart.Anchored = false
+						-- Прикрепляем игрока к объекту "plate"
+						humanoidRootPart.CFrame = plate.CFrame * CFrame.new(0, humanoidRootPart.Size.Y / 2, 0)
+						local weld = Instance.new("WeldConstraint")
+						weld.Parent = humanoidRootPart
+						weld.Part0 = humanoidRootPart
+						weld.Part1 = plate
+					end
+				end
+			end
+		end
 	end)
 
 	local checkText = Instance.new("TextLabel")
@@ -87,13 +112,11 @@ local function CreateCheckBox(text, position)
 end
 
 local button1 = CreateButton("Arena Farm (beta)", UDim2.new(0.5, 0, 0.05, 0))
-local button2 = CreateButton("Arena Farm 2 (beta)", UDim2.new(0.5, 0, 0.17, 0))
+local button2 = CreateButton("Get All Slappy", UDim2.new(0.5, 0, 0.17, 0))
 
 -- Создание чекбоксов
-local checkBox1 = CreateCheckBox("Farm orbs", UDim2.new(0.5, 0, 0.57, 0))
-local checkBox2 = CreateCheckBox("Killed mob", UDim2.new(0.5, 0, 0.67, 0))
-local checkBox3 = CreateCheckBox("Collect present", UDim2.new(0.5, 0, 0.77, 0))
-local checkBox4 = CreateCheckBox("Farm ant amulet", UDim2.new(0.5, 0, 0.87, 0))
+local checkBox1 = CreateCheckBox("Get tycoon :D (10min)", UDim2.new(0.5, 0, 0.57, 0))
+
 
 local player = game.Players.LocalPlayer
 local button = script.Parent -- Предполагается, что кнопка находится в том же объекте, где находится этот скрипт
@@ -141,14 +164,4 @@ button1.MouseButton1Click:Connect(function()
 		-- Запускаем функцию периодического телепортирования в новом потоке
 		coroutine.wrap(periodicTeleport)()
 	end
-end)
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local button2 = script.Parent -- Предполагается, что кнопка находится в том же объекте, где находится этот скрипт
-
-local RockmodeEvent = ReplicatedStorage:WaitForChild("Rockmode") -- Ждем, пока событие Rockmode будет доступно в ReplicatedStorage
-
--- Привязываем функцию к событию нажатия на кнопку
-button2.MouseButton1Click:Connect(function()
-	RockmodeEvent:Fire() -- Активируем удаленное событие Rockmode
 end)
