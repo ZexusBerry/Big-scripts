@@ -1,0 +1,186 @@
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+local Drawing = Drawing or loadstring(game:HttpGet("https://raw.githubusercontent.com/Roblox/Lua/master/Libraries/Drawing.lua"))()
+
+local AimEnabled = false
+local AimSmooth = 5
+local AimWallCheck = false
+local AimTargetPart = "Head"
+local AimFOV = 100
+local AimFOVVisible = true
+local AimKey = Enum.KeyCode.F
+
+-- Настройки для FOV круга
+local FOVCircle = Drawing.new("Circle")
+FOVCircle.Visible = AimFOVVisible
+FOVCircle.Radius = AimFOV
+FOVCircle.Thickness = 2
+FOVCircle.Color = Color3.fromRGB(255, 255, 255)
+FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+
+local ScreenGui = Instance.new("ScreenGui")
+local MenuFrame = Instance.new("Frame")
+local SmoothSlider = Instance.new("TextLabel")
+local SmoothValue = Instance.new("TextBox")
+local WallCheckToggle = Instance.new("TextLabel")
+local WallCheckButton = Instance.new("TextButton")
+local TargetPartLabel = Instance.new("TextLabel")
+local TargetPartDropdown = Instance.new("TextBox")
+local FOVLabel = Instance.new("TextLabel")
+local FOVValue = Instance.new("TextBox")
+local FOVToggleLabel = Instance.new("TextLabel")
+local FOVToggleButton = Instance.new("TextButton")
+local CommandCheckLabel = Instance.new("TextLabel")
+local CommandCheckButton = Instance.new("TextButton")
+
+ScreenGui.Parent = game.CoreGui
+MenuFrame.Parent = ScreenGui
+MenuFrame.Size = UDim2.new(0, 250, 0, 350)
+MenuFrame.Position = UDim2.new(0, 0, 0, 0)
+MenuFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+
+SmoothSlider.Parent = MenuFrame
+SmoothSlider.Text = "Smooth (0-10)"
+SmoothSlider.Position = UDim2.new(0, 10, 0, 10)
+SmoothValue.Parent = MenuFrame
+SmoothValue.Text = tostring(AimSmooth)
+SmoothValue.Position = UDim2.new(0, 150, 0, 10)
+SmoothValue.Size = UDim2.new(0, 80, 0, 30)
+
+WallCheckToggle.Parent = MenuFrame
+WallCheckToggle.Text = "Wall Check:"
+WallCheckToggle.Position = UDim2.new(0, 10, 0, 50)
+WallCheckButton.Parent = MenuFrame
+WallCheckButton.Text = AimWallCheck and "On" or "Off"
+WallCheckButton.Position = UDim2.new(0, 150, 0, 50)
+WallCheckButton.Size = UDim2.new(0, 80, 0, 30)
+
+TargetPartLabel.Parent = MenuFrame
+TargetPartLabel.Text = "Target Part:"
+TargetPartLabel.Position = UDim2.new(0, 10, 0, 90)
+TargetPartDropdown.Parent = MenuFrame
+TargetPartDropdown.Text = AimTargetPart
+TargetPartDropdown.Position = UDim2.new(0, 150, 0, 90)
+TargetPartDropdown.Size = UDim2.new(0, 80, 0, 30)
+
+FOVLabel.Parent = MenuFrame
+FOVLabel.Text = "FOV (1-360):"
+FOVLabel.Position = UDim2.new(0, 10, 0, 130)
+FOVValue.Parent = MenuFrame
+FOVValue.Text = tostring(AimFOV)
+FOVValue.Position = UDim2.new(0, 150, 0, 130)
+FOVValue.Size = UDim2.new(0, 80, 0, 30)
+
+FOVToggleLabel.Parent = MenuFrame
+FOVToggleLabel.Text = "FOV Visible:"
+FOVToggleLabel.Position = UDim2.new(0, 10, 0, 170)
+FOVToggleButton.Parent = MenuFrame
+FOVToggleButton.Text = AimFOVVisible and "On" or "Off"
+FOVToggleButton.Position = UDim2.new(0, 150, 0, 170)
+FOVToggleButton.Size = UDim2.new(0, 80, 0, 30)
+
+CommandCheckLabel.Parent = MenuFrame
+CommandCheckLabel.Text = "Command Check:"
+CommandCheckLabel.Position = UDim2.new(0, 10, 0, 210)
+CommandCheckButton.Parent = MenuFrame
+CommandCheckButton.Text = "Check"
+CommandCheckButton.Position = UDim2.new(0, 150, 0, 210)
+CommandCheckButton.Size = UDim2.new(0, 80, 0, 30)
+
+-- Обновление FOV круга
+local function UpdateFOVCircle()
+    FOVCircle.Visible = AimFOVVisible
+    FOVCircle.Radius = AimFOV
+    FOVCircle.Position = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+end
+
+-- Функции для кнопок
+WallCheckButton.MouseButton1Click:Connect(function()
+    AimWallCheck = not AimWallCheck
+    WallCheckButton.Text = AimWallCheck and "On" or "Off"
+end)
+
+FOVToggleButton.MouseButton1Click:Connect(function()
+    AimFOVVisible = not AimFOVVisible
+    FOVToggleButton.Text = AimFOVVisible and "On" or "Off"
+    UpdateFOVCircle()
+end)
+
+CommandCheckButton.MouseButton1Click:Connect(function()
+    print("Command check executed!")
+end)
+
+SmoothValue.FocusLost:Connect(function()
+    local value = tonumber(SmoothValue.Text)
+    if value and value >= 0 and value <= 10 then
+        AimSmooth = value
+    else
+        SmoothValue.Text = tostring(AimSmooth)
+    end
+end)
+
+TargetPartDropdown.FocusLost:Connect(function()
+    local part = TargetPartDropdown.Text
+    AimTargetPart = part
+end)
+
+FOVValue.FocusLost:Connect(function()
+    local value = tonumber(FOVValue.Text)
+    if value and value >= 1 and value <= 360 then
+        AimFOV = value
+        UpdateFOVCircle()
+    else
+        FOVValue.Text = tostring(AimFOV)
+    end
+end)
+
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == AimKey and not gameProcessed then
+        AimEnabled = not AimEnabled
+    end
+end)
+
+local function IsVisible(target)
+    local origin = Camera.CFrame.Position
+    local _, onScreen = Camera:WorldToScreenPoint(target.Position)
+    if not onScreen then return false end
+    if not AimWallCheck then return true end
+    local ray = Ray.new(origin, (target.Position - origin).unit * 500)
+    local hit = workspace:FindPartOnRay(ray, LocalPlayer.Character)
+    return hit and hit:IsDescendantOf(target.Parent)
+end
+
+local function GetClosestTarget()
+    local closestTarget = nil
+    local shortestDistance = AimFOV
+
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild(AimTargetPart) then
+            local targetPart = player.Character[AimTargetPart]
+            local screenPoint = Camera:WorldToScreenPoint(targetPart.Position)
+            local distanceFromCenter = (Vector2.new(screenPoint.X, screenPoint.Y) - Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)).magnitude
+
+            if distanceFromCenter < shortestDistance and IsVisible(targetPart) then
+                closestTarget = targetPart
+                shortestDistance = distanceFromCenter
+            end
+        end
+    end
+
+    return closestTarget
+end
+
+RunService.RenderStepped:Connect(function()
+    if AimEnabled then
+        local target = GetClosestTarget()
+        if target then
+            local aimPosition = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, target.Position), AimSmooth / 10)
+            Camera.CFrame = aimPosition
+        end
+    end
+
+    UpdateFOVCircle()
+end)
